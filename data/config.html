@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+  </meta>
+  <title>Configuration</title>
+</head>
+
+<body onload='request()'>
+
+  <h1>Configuration</h1>
+
+  <label><b>Mode</b></label>
+  <form enctype="multipart/form-data" name="modeForm">
+    <input type="checkbox" id="autoMode" name="autoMode" onclick="autoModeFunction()">
+    <label>Auto</label>
+    <input type="checkbox" id="remoteMode" name="remoteMode" onclick="remoteModeFunction()">
+    <label>Remote</label>
+    <input type="checkbox" id="manMode" name="manMode" checked onclick="manModeFunction()">
+    <label>Manual</label>
+    <br><input type="button" value="OK" onclick="FormButtonClick('modeForm')">
+  </form>
+
+  <label><br><b>Time</b></label>
+  <br><label>Current time </label><input type="text" id="time" disabled>
+  <form enctype="multipart/form-data" name="modeTime">
+    <label>Set time</label>
+    <input type="time" id="currentTime" name="currentTime">
+    <br><input type="button" value="OK" onclick="FormButtonClick('modeTime')">
+  </form>
+
+  <label><br><b>Automatic settings</b></label>
+  <form enctype="multipart/form-data" name="autoSettingsForm">
+    <label>Start time</label>
+    <input type="time" id="autoStart" name="autoStart">
+    <br><label>Duration (60 * e^(0.1 * pool temperature) :</label>
+    <br><input type="number" id="autoDuration" disabled value="-1" min="1" max="1440"> minutes
+    <br><input type="button" value="OK" onclick="FormButtonClick('autoSettingsForm')">
+  </form>
+
+  <label><br><b>Manual settings</b> (Duration 0 to disable)</label>
+  <form enctype="multipart/form-data" name="manConfForm">
+    <label>Start time 1</label>
+    <input type="time" id="manStart0" name="manStart0">
+    <br><label>Duration 1 </label>
+    <input type="number" id="duration0" name="duration0" value="0" min="0" max="1440"> minutes
+    <br><br><label>Start time 2</label>
+    <input type="time" id="manStart1" name="manStart1">
+    <br><label>Duration 2 </label>
+    <input type="number" id="duration1" name="duration1" value="0" min="0" max="1440"> minutes
+    <br><br><label>Start time 3</label>
+    <input type="time" id="manStart2" name="manStart2">
+    <br><label>Duration 3 </label>
+    <input type="number" id="duration2" name="duration2" value="0" min="0" max="1440"> minutes
+    <br> <input type="button" value="OK" onclick="FormButtonClick('manConfForm')">
+  </form>
+
+  <label><br><b>Antifreeze temperature limit settings</b></label>
+  <form enctype="multipart/form-data" name="antifreezeForm">
+    <label>Air (10 to disable)</label>
+    <br><input type="number" id="airantifreeze" name="airFreezeSP" value="0" min="-10" max="10" step="0.1"> °C
+    <br><label>Water (10 to disable)</label>
+    <br><input type="number" id="waterantifreeze" name="waterFreezeSP" value="0" min="-10" max="10" step="0.1"> °C
+    <br><input type="button" value="OK" onclick="FormButtonClick('antifreezeForm')">
+  </form>
+
+  <label><br><b>Solar settings</b> (Duration 0 to disable)</label>
+  <form enctype="multipart/form-data" name="solarForm">
+    <input type="number" id="solarTemp" name="solarTempSP" value="0" min="0" max="50" step="0.1"> °C
+    <br><input type="button" value="OK" onclick="FormButtonClick('solarForm')">
+  </form>
+
+  <script>
+    var today = new Date();
+    var time = today.getHours() + ":" + today.getMinutes();
+    document.getElementById("currentTime").value = time;
+
+    function manModeFunction() {
+      if (document.getElementById("manMode").checked) {
+        document.getElementById("manMode").value = true;
+        document.getElementById("autoMode").value = false;
+        document.getElementById("autoMode").checked = false;
+        document.getElementById("remoteMode").value = false;
+        document.getElementById("remoteMode").checked = false;
+      }
+    }
+
+    function autoModeFunction() {
+      if (document.getElementById("autoMode").checked) {
+        document.getElementById("autoMode").value = true;
+        document.getElementById("manMode").value = false;
+        document.getElementById("manMode").checked = false;
+        document.getElementById("remoteMode").value = false;
+        document.getElementById("remoteMode").checked = false;
+      }
+      else {
+        document.getElementById("manMode").checked = true;
+        document.getElementById("manMode").value = true;
+        document.getElementById("autoMode").value = false;
+        document.getElementById("remoteMode").value = false;
+      }
+    }
+    function remoteModeFunction() {
+      if (document.getElementById("remoteMode").checked) {
+        document.getElementById("remoteMode").value = true;
+        document.getElementById("autoMode").value = false;
+        document.getElementById("autoMode").checked = false;
+        document.getElementById("manMode").value = false;
+        document.getElementById("manMode").checked = false;
+      }
+      else {
+        document.getElementById("manMode").checked = true;
+        document.getElementById("manMode").value = true;
+        document.getElementById("autoMode").value = false;
+        document.getElementById("remoteMode").value = false;
+      }
+    }
+    //update data from json
+    function updateInfo(doc) {
+      if (doc.mode == 0) {
+        document.getElementById("manMode").checked = true;
+        document.getElementById("manMode").value = true;
+        document.getElementById("autoMode").checked = false;
+        document.getElementById("autoMode").value = false;
+        document.getElementById("remoteMode").checked = false;
+        document.getElementById("remoteMode").value = false;
+      }
+
+      if (doc.mode == 1) {
+        document.getElementById("autoMode").checked = true;
+        document.getElementById("autoMode").value = true;
+        document.getElementById("manMode").checked = false;
+        document.getElementById("manMode").value = false;
+        document.getElementById("remoteMode").checked = false;
+        document.getElementById("remoteMode").value = false;
+      }
+      if (doc.mode == 2) {
+        document.getElementById("remoteMode").checked = true;
+        document.getElementById("remoteMode").value = true;
+        document.getElementById("manMode").checked = false;
+        document.getElementById("manMode").value = false;
+        document.getElementById("autoMode").checked = false;
+        document.getElementById("autoMode").value = false;
+      }
+      document.getElementById("airantifreeze").value = doc.airFreezeSP;
+      document.getElementById("waterantifreeze").value = doc.waterFreezeSP;
+      document.getElementById("solarTemp").value = doc.solarTempSP;
+      document.getElementById("autoStart").value = doc.autoStart;
+      document.getElementById("autoDuration").value = doc.autoDuration
+      document.getElementById("manStart0").value = doc.manStart0;
+      document.getElementById("duration0").value = doc.duration0;
+      document.getElementById("manStart1").value = doc.manStart1;
+      document.getElementById("duration1").value = doc.duration1;
+      document.getElementById("manStart2").value = doc.manStart2;
+      document.getElementById("duration2").value = doc.duration2;
+      document.getElementById("time").value = doc.time;
+    }
+
+    function createXmlHttpObject() {
+      if (window.XMLHttpRequest) {
+        xmlHttp = new XMLHttpRequest();
+      }
+      else {
+        xmlHttp = new ActiveXObject('Microsoft.XMLHTTP');
+      }
+      return xmlHttp;
+    }
+
+    function request() {
+      var xhr = createXmlHttpObject();
+
+      xhr.open("GET", "json", true);
+      xhr.send();
+
+      xhr.onreadystatechange = function () {
+        var message;
+        //console.log(this);
+        if (this.readyState == 4 && this.status == 200) {
+          //console.log(this.responseText);
+          updateInfo(JSON.parse(this.responseText));
+        }
+      };
+
+      //var message = '{  "device": "ESP-PISC",  "SSID": "MARVINC",  "RSSI": -75,  "temp0": 24.5,  "temp1": 25,  "temp2": 24.5,  "input0_state": 0,  "input1_state": 0,  "input2_state": 0,  "relay0_state": 0,  "relay1_state": 0,  "relay2_state": 0,  "relay3_state": 0,  "mode": 2,  "autoStart": "12:07",  "autoDuration": 0,  "airFreezeSP": 10,  "waterFreezeSP": 10,  "solarTempSP": 0,  "manStart0": "00:00",  "duration0": 60,  "manStart1": "00:00", "duration1": 60,  "manStart2": "00:00",  "duration2": 60,  "gmtOffset": 1,  "ValvePosition": 0,  "time": "12:34:56"}'
+      //updateInfo(JSON.parse(message));
+
+    }
+
+    function FormButtonClick(formName) {
+      var data = new FormData(document.forms.namedItem(formName))
+
+      var xhr = createXmlHttpObject();
+
+      xhr.open("POST", "config", true);
+      xhr.send(data);
+
+      request();
+    }
+  </script>
+</body>
+
+</html>

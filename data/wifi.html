@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+  </meta>
+  <title>wifi</title>
+  <style>
+    :required {
+      border: 2px dotted orange;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>WiFi Parameters</h1>
+  <div id="device_message"></div>
+  <form id=formreq>
+    <br>SSID
+    <br><input type="text" required placeholder="yourSSID" id=SSID_>
+    <br>PassPhrase
+    <br><input type="text" placeholder="yourPWD" id=PWD_>
+    <br><br><input type="submit">
+  </form>
+  <script type="text/javascript">
+
+    function createXmlHttpObject() {
+      if (window.XMLHttpRequest) {
+        xmlHttp = new XMLHttpRequest();
+      }
+      else {
+        xmlHttp = new ActiveXObject('Microsoft.XMLHTTP');
+      }
+      return xmlHttp;
+    }
+
+    function request(args) {
+      var xhr = createXmlHttpObject();
+
+      xhr.open("GET", "/wifi" + args, true);
+      xhr.send();
+      xhr.onreadystatechange = function () {
+        var message;
+        //console.log(this);
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("device_message").innerHTML = "Parameters successfully sent";
+        }
+        else if (this.readyState == 4 && this.status == 404) {
+          document.getElementById("device_message").innerHTML = "Something wrong happens !!";
+        }
+      };
+    }
+
+    document.getElementById("formreq").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var SSID = document.getElementById("SSID_").value;
+      var PDW = document.getElementById("PWD_").value;
+      //console.log(SSID + "@" + PDW);
+      request("?wifiSSID=" + SSID + "&wifiPass=" + PDW);
+      return false;
+    });
+  </script>
+</body>
+
+</html>

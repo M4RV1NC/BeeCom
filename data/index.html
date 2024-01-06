@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+  </meta>
+  <title>index</title>
+  <style>
+    .blockInit {
+      width: 100%;
+      border: none;
+      background-color: #2444d4;
+      color: white;
+      padding: 14px 28px;
+      font-size: 16px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .blockOn {
+      width: 100%;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 28px;
+      font-size: 16px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .blockOff {
+      width: 100%;
+      border: none;
+      background-color: #F44336;
+      ;
+      color: white;
+      padding: 14px 28px;
+      font-size: 16px;
+      cursor: pointer;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body onload='request("")'>
+  <h1>Pool</h1>
+  Device connected to : <span id="current_SSID">Waiting</span>
+  <br><br>
+  <label><b>Temperature</b></label>
+  <br>Pool : <span id="temp0">Waiting</span>
+  <br>Air : <span id="temp1">Waiting</span>
+  <br>Solar : <span id="temp2">Waiting</span>
+  <br><br>
+  <label><b>Inputs</b></label>
+  <br>input0 : <span id="input0_state">Waiting</span>
+  <br>input1 : <span id="input1_state">Waiting</span>
+  <br>input2 : <span id="input2_state">Waiting</span>
+  <br><br>
+  <label><b>Relay</b></label>
+  <br>Relay0 : <br><button id=relay0_button onClick='request("?relay0=toggle")' type="button"
+    class="blockInit">Waiting</button>
+  <br>Relay1 : <br><button id=relay1_button onClick='request("?relay1=toggle")' type="button"
+    class="blockInit">Waiting</button>
+  <br>Relay2 : <br><button id=relay2_button onClick='request("?relay2=toggle")' type="button"
+    class="blockInit">Waiting</button>
+  <br>Relay3 : <br><button id=relay3_button onClick='request("?relay3=toggle")' type="button"
+    class="blockInit">Waiting</button>
+
+  <script type="text/javascript">
+    var dummy = setInterval(autoRefresh, 5000);
+
+    function autoRefresh() {
+      request("");
+    }
+
+    function createXmlHttpObject() {
+      if (window.XMLHttpRequest) {
+        xmlHttp = new XMLHttpRequest();
+      }
+      else {
+        xmlHttp = new ActiveXObject('Microsoft.XMLHTTP');
+      }
+      return xmlHttp;
+    }
+
+    function request(args) {
+      var xhr = createXmlHttpObject();
+
+      xhr.open("GET", "json" + args, true);
+      xhr.send();
+
+      xhr.onreadystatechange = function () {
+        var message;
+        //console.log(this);
+        if (this.readyState == 4 && this.status == 200) {
+          //console.log(this.responseText);
+          updateInfo(JSON.parse(this.responseText));
+        }
+      };
+    }
+
+    function updateInfo(doc) {
+      //console.log(doc.SSID);
+      document.getElementById("current_SSID").innerHTML = doc.SSID;
+      document.getElementById("temp0").innerHTML = doc.temp0 + " °C";
+      document.getElementById("temp1").innerHTML = doc.temp1 + " °C";
+      document.getElementById("temp2").innerHTML = doc.temp2 + " °C";
+
+      document.getElementById("input0_state").innerHTML = doc.input0_state == 0 ? "false" : "true";
+      document.getElementById("input1_state").innerHTML = doc.input1_state == 0 ? "false" : "true";
+      document.getElementById("input2_state").innerHTML = doc.input2_state == 0 ? "false" : "true";
+
+      relay0_button.innerHTML = doc.relay0_state == 0 ? "Turn on" : "Turn off";
+      document.getElementById("relay0_button").className = doc.relay0_state == 0 ? "blockOff" : "blockOn";
+      relay1_button.innerHTML = doc.relay1_state == 0 ? "Turn on" : "Turn off";
+      document.getElementById("relay1_button").className = doc.relay1_state == 0 ? "blockOff" : "blockOn";
+      relay2_button.innerHTML = doc.relay2_state == 0 ? "Turn on" : "Turn off";
+      document.getElementById("relay2_button").className = doc.relay2_state == 0 ? "blockOff" : "blockOn";
+      relay3_button.innerHTML = doc.relay3_state == 0 ? "Turn on" : "Turn off";
+      document.getElementById("relay3_button").className = doc.relay3_state == 0 ? "blockOff" : "blockOn";
+    }
+
+  </script>
+</body>
+
+</html>

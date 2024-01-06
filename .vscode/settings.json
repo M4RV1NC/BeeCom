@@ -1,0 +1,12 @@
+{
+    "cmake.sourceDirectory": "C:/Users/Vincent/Documents/PlatformIO/Projects/ESP32_BASE/.pio/libdeps/esp32dev/ArduinoJson",
+    "files.associations": {
+        "cmath": "cpp",
+        "*.tcc": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "memory": "cpp",
+        "random": "cpp",
+        "optional": "cpp"
+    }
+}

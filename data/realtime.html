@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>realTime</title>
+</head>
+
+<body onload="javascript:init()">
+  <h1>RealTime</h1>
+  <input type="text" placeholder="type a command here" id="textBar">
+  <button id="myBtn" onclick="sendText()">Send</button>
+  <div id="log"></div>
+  <script>
+    var Socket;
+    function init() {
+      Socket = new WebSocket('ws://' + window.location.hostname + ':81/');
+      Socket.onmessage = function (event) {
+        document.getElementById("log").insertAdjacentHTML('beforeend', "<br>" + event.data);
+        //document.getElementById("log").innerHTML = event.data;
+      }
+    }
+    function sendText() {
+      Socket.send(document.getElementById("textBar").value);
+      document.getElementById("textBar").value = '';
+    }
+    var input = document.getElementById("textBar");
+    input.addEventListener("keyup", function (event) {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        document.getElementById("myBtn").click();
+      }
+    });
+  </script>
+</body>
+
+</html>
